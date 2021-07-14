@@ -1,0 +1,3 @@
+set num_threads=8
+set ngbehavior=hsa
+set ng_nomodcheck
