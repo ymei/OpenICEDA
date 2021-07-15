@@ -1,3 +1,4 @@
 *.dat
 *.sqlite
 *.pkl
+*.ipynb_checkpoints

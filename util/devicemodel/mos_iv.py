@@ -25,10 +25,10 @@ Ls = [0.15, 0.18, 0.25, 0.5, 1, 2, 4, 8, 20, 100]
 Vgs = np.linspace(0, 1.8, 361)
 Vds = np.linspace(0, 1.8, 361)
 ## PMOS 01v8 lvt
-# Ws = [0.42, 0.55, 0.64, 0.84, 1, 1.26, 1.65, 1.68, 2, 3, 5, 7, 100]
-# Ls = [0.35, 0.5, 1, 2, 4, 8, 20, 100]
-# Vgs = np.linspace(-1.8, 0.0, 361)
-# Vds = np.linspace(-1.8, 0.0, 361)
+Ws = [0.42, 0.55, 0.64, 0.84, 1, 1.26, 1.65, 1.68, 2, 3, 5, 7, 100]
+Ls = [0.35, 0.5, 1, 2, 4, 8, 20, 100]
+Vgs = np.linspace(0.0, -1.8, 361)
+Vds = np.linspace(0.0, -1.8, 361)
 
 ## Number of lines in data block header
 dbHeaderNLines = 12
@@ -91,5 +91,5 @@ if __name__ == "__main__":
     ofp.commit()
     ofp.close()
 
-    pdf = pd.Series(pda, index=midx, name="Id")
+    pdf = pd.Series(pda, index=midx, name="Id").to_frame()
     pdf.to_pickle(ofname1)

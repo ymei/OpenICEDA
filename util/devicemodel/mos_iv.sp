@@ -38,8 +38,10 @@ Vb b 0 0
 
 Vd1 D1v8 net1 0
 *M1 net1 G1v8 S B n1 L={L} W={W}
-XM1 net1 G1v8 S B sky130_fd_pr__nfet_01v8_lvt L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1 
-*XM1 net1 G1v8 S B sky130_fd_pr__pfet_01v8_lvt L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1 
+*XM1 net1 G1v8 S B sky130_fd_pr__nfet_01v8_lvt L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1
+*XM1 net1 G1v8 S B sky130_fd_pr__nfet_01v8 L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1
+*XM1 net1 G1v8 S B sky130_fd_pr__pfet_01v8_lvt L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1
+XM1 net1 G1v8 S B sky130_fd_pr__pfet_01v8 L={L} W={W} nf=1 sa=0 sb=0 sd=0 mult=1 m=1
 + ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
 + pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
 
@@ -51,11 +53,11 @@ set filetype = ascii
 * NMOS LVT
 *compose Ws values 0.36 0.39 0.42 0.52 0.54 0.55 0.58 0.6 0.61 0.64 0.65 0.74 0.84 1 1.26 1.68 2 3 5 7 100
 * 0.36, 0.39 don't seem to work
-compose Ws values 0.42 0.52 0.54 0.55 0.58 0.6 0.61 0.64 0.65 0.74 0.84 1 1.26 1.68 2 3 5 7 100
-compose Ls values 0.15 0.18 0.25 0.5 1 2 4 8 20 100
+*compose Ws values 0.42 0.52 0.54 0.55 0.58 0.6 0.61 0.64 0.65 0.74 0.84 1 1.26 1.68 2 3 5 7 100
+*compose Ls values 0.15 0.18 0.25 0.5 1 2 4 8 20 100
 * PMOS LVT
-*compose Ws values 0.42 0.55 0.64 0.84 1 1.26 1.65 1.68 2 3 5 7 100
-*compose Ls values 0.35 0.5 1 2 4 8 20 100
+compose Ws values 0.42 0.55 0.64 0.84 1 1.26 1.65 1.68 2 3 5 7 100
+compose Ls values 0.35 0.5 1 2 4 8 20 100
 
 foreach WW $&Ws
   foreach LL $&Ls
@@ -63,8 +65,8 @@ foreach WW $&Ws
     alterparam L = $LL
     reset
     echo W/L = $WW / $LL
-    dc vd 0.0 1.8 0.005 vg 0.0 1.8 0.005
-*    dc vd 0.0 -1.8 -0.005 vg 0.0 -1.8 -0.005
+*    dc vd 0.0 1.8 0.005 vg 0.0 1.8 0.005
+    dc vd 0.0 -1.8 -0.005 vg 0.0 -1.8 -0.005
 *   save @m.xm1.msky130_fd_pr__nfet_01v8_lvt[gm]
 *   op
     set appendwrite
