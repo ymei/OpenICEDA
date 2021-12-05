@@ -4,7 +4,7 @@ GIT                ?= git
 GIT_CLONE_OPTIONS  := --recurse-submodules -j8
 GIT_PULL_OPTIONS   := --rebase --recurse-submodules -j8
 GIT_SRC_OPEN_PDKS  := https://github.com/RTimothyEdwards/open_pdks
-DEST_SKY130PDK     := $(PREFIX)/share/pdks
+DEST_SKY130PDK     := $(PREFIX)/share/pdk
 GIT_SRC_MAGIC      := https://github.com/RTimothyEdwards/magic
 GIT_SRC_KLAYOUT    := https://github.com/KLayout/klayout
 GIT_SRC_XCIRCUIT   := https://github.com/RTimothyEdwards/xcircuit
@@ -87,6 +87,7 @@ update_magic:
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
+# need ruby-dev
 update_klayout:
 	DIR="klayout" GIT_SRC=$(GIT_SRC_KLAYOUT); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
@@ -151,7 +152,7 @@ update_netgen:
 install_sky130pdk: update_open_pdks
 	cd open_pdks/ &&\
 	$(MAKE) distclean ;\
-	./configure --enable-sky130-pdk --with-sky130-local-path=$(DEST_SKY130PDK) --enable-sram-sky130 &&\
+	./configure --prefix=$(PREFIX) --enable-sky130-pdk --with-sky130-local-path=$(DEST_SKY130PDK) --enable-sram-sky130 &&\
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 

@@ -15,6 +15,11 @@
 .param L  = 0.35
 .param NF = 1
 
+* Send parameters to the .control section
+* Generate new vectors with the same name as the params.
+.csparam W = {W}
+.csparam L = {L}
+
 .option Temp=27.0
 
 * BSIM3v3.3.0 model with modified default parameters 0.18um
@@ -28,8 +33,8 @@
 
 .param mc_mm_switch=0
 .param mc_pr_switch=1
-.lib /opt/OpenICEDA/share/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-*.include /opt/OpenICEDA/share/pdks/sky130A/libs.tech/ngspice/../../libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_20v0__tt_discrete.corner.spice
+.lib /opt/OpenICEDA/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+*.include /opt/OpenICEDA/share/pdk/sky130A/libs.tech/ngspice/../../libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_20v0__tt_discrete.corner.spice
 
 Vg G1v8 0 1.8
 Vs s 0 0
@@ -64,7 +69,7 @@ foreach WW $&Ws
     alterparam W = $WW
     alterparam L = $LL
     reset
-    echo W/L = $WW / $LL
+    echo W/L = $&W / $&L
 *    dc vd 0.0 1.8 0.005 vg 0.0 1.8 0.005
     dc vd 0.0 -1.8 -0.005 vg 0.0 -1.8 -0.005
 *   save @m.xm1.msky130_fd_pr__nfet_01v8_lvt[gm]
