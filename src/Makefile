@@ -17,6 +17,8 @@ GIT_SRC_XSCHEM     := https://github.com/StefanSchippers/xschem
 GIT_SRC_XSCHEM_GAW := https://github.com/StefanSchippers/xschem-gaw
 GIT_SRC_NGSPICE    := https://github.com/imr/ngspice
 GIT_SRC_VERILATOR  := https://github.com/verilator/verilator
+GIT_SRC_TRILINOS   := https://github.com/trilinos/Trilinos
+GIT_SRC_XYCE       := https://github.com/Xyce/Xyce
 
 .PHONY: update_tools
 
@@ -92,7 +94,7 @@ update_klayout:
 	DIR="klayout" GIT_SRC=$(GIT_SRC_KLAYOUT); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
-	./build.sh -qt5 -option $(MAKE_OPTIONS)
+	./build.sh $(MAKE_OPTIONS)
 
 # make seems to modify git tracked files in this repo
 update_xcircuit:
@@ -161,3 +163,24 @@ update_open_pdks:
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	ls
+
+# required by Xyce
+# apt install adms libsuitesparse-dev libopenmpi-dev
+update_trilinos:
+	DIR="xyce" GIT_SRC=$(GIT_SRC_XYCE); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) && cd .. &&\
+	DIR="trilinos" GIT_SRC=$(GIT_SRC_TRILINOS);\
+	rm -rf "$$DIR" && $(GIT) clone $(GIT_CLONE_OPTIONS) --depth 1 --branch trilinos-release-12-12-1 $(GIT_SRC_TRILINOS) "$$DIR" &&\
+	cd "$$DIR" && mkdir -p build && cd build &&\
+	cmake -C ../../xyce/cmake/trilinos/trilinos-config-MPI.cmake -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DAMD_INCLUDE_DIRS=/usr/include/suitesparse -DBUILD_SHARED_LIBS=ON .. &&\
+	$(MAKE) $(MAKE_OPTIONS) &&\
+	$(MAKE) install && cd ../../ &&\
+
+update_xyce:
+	DIR="xyce" GIT_SRC=$(GIT_SRC_XYCE); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	mkdir -p build && cd build &&\
+	cmake -DCMAKE_INSTALL_PREFIX=$(PREFIX) -D Trilinos_ROOT=$(PREFIX) -D Xyce_PLUGIN_SUPPORT=ON .. &&\
+	cmake --build . $(MAKE_OPTIONS) -t install
