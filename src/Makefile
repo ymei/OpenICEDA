@@ -2,7 +2,7 @@ MAKE_OPTIONS       ?= -j8
 PREFIX             ?= /opt/OpenICEDA
 GIT                ?= git
 GIT_CLONE_OPTIONS  := --recurse-submodules -j8
-GIT_PULL_OPTIONS   := --rebase --recurse-submodules -j8
+GIT_PULL_OPTIONS   := --rebase --recurse-submodules --prune -j8
 GIT_SRC_OPEN_PDKS  := https://github.com/RTimothyEdwards/open_pdks
 DEST_SKY130PDK     := $(PREFIX)/share/pdk
 GIT_SRC_MAGIC      := https://github.com/RTimothyEdwards/magic
@@ -19,6 +19,9 @@ GIT_SRC_NGSPICE    := https://github.com/imr/ngspice
 GIT_SRC_VERILATOR  := https://github.com/verilator/verilator
 GIT_SRC_TRILINOS   := https://github.com/trilinos/Trilinos
 GIT_SRC_XYCE       := https://github.com/Xyce/Xyce
+GIT_SRC_AMARANTH   := https://github.com/amaranth-lang/amaranth
+PYTHON             ?= python3
+PYVENV             ?= $(PREFIX)/OICvenv
 
 .PHONY: update_tools
 
@@ -184,3 +187,14 @@ update_xyce:
 	mkdir -p build && cd build &&\
 	cmake -DCMAKE_INSTALL_PREFIX=$(PREFIX) -D Trilinos_ROOT=$(PREFIX) -D Xyce_PLUGIN_SUPPORT=ON .. &&\
 	cmake --build . $(MAKE_OPTIONS) -t install
+
+update_amaranth:
+	DIR="amaranth" GIT_SRC=$(GIT_SRC_AMARANTH); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	pip install --editable .[builtin-yosys]
+
+create_pyvenv:
+	$(PYTHON) -m venv --symlinks --system-site-packages --clear $(PYVENV)
+update_pyvenv:
+	$(PYTHON) -m venv --symlinks --system-site-packages --upgrade --upgrade-deps $(PYVENV)
