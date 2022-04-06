@@ -188,7 +188,7 @@ update_xyce:
 	cmake -DCMAKE_INSTALL_PREFIX=$(PREFIX) -D Trilinos_ROOT=$(PREFIX) -D Xyce_PLUGIN_SUPPORT=ON .. &&\
 	cmake --build . $(MAKE_OPTIONS) -t install
 
-update_amaranth:
+update_amaranth: update_pyvenv
 	DIR="amaranth" GIT_SRC=$(GIT_SRC_AMARANTH); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
