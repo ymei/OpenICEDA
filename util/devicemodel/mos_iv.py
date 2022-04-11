@@ -19,16 +19,22 @@ else:
     # import tkinter as tk
     pass
 
-## NMOS 01v8 lvt
-Ws = [0.42, 0.52, 0.54, 0.55, 0.58, 0.6, 0.61, 0.64, 0.65, 0.74, 0.84, 1, 1.26, 1.68, 2, 3, 5, 7, 100]
-Ls = [0.15, 0.18, 0.25, 0.5, 1, 2, 4, 8, 20, 100]
+## NMOS nfet 01v8
+#Ws = [0.36, 0.39, 0.42, 0.52, 0.54, 0.55, 0.58, 0.6, 0.61, 0.64, 0.65, 0.74, 0.84, 1, 1.26, 1.68, 2, 3, 5, 7, 100]
+#Ls = [0.15, 0.18, 0.25, 0.5, 1, 2, 4, 8, 20, 100]
+## NMOS nfet 01v8_lvt
+Ws = [0.42, 0.55, 0.64, 0.84, 1, 1.65, 3, 5, 7, 100]
+Ls = [0.15, 0.18, 0.25, 0.5, 1, 2, 4, 8, 100]
 Vgs = np.linspace(0, 1.8, 361)
 Vds = np.linspace(0, 1.8, 361)
-## PMOS 01v8 lvt
-Ws = [0.42, 0.55, 0.64, 0.84, 1, 1.26, 1.65, 1.68, 2, 3, 5, 7, 100]
-Ls = [0.35, 0.5, 1, 2, 4, 8, 20, 100]
-Vgs = np.linspace(0.0, -1.8, 361)
-Vds = np.linspace(0.0, -1.8, 361)
+## PMOS pfet 01v8
+#Ws = [0.42, 0.55, 0.64, 0.84, 1, 1.26, 1.65, 1.68, 2, 3, 5, 7, 100]
+#Ls = [0.15, 0.18, 0.25, 0.5, 1, 2, 4, 8, 20, 100]
+## PMOS pfet 01v8_lvt
+#Ws = [0.42, 0.55, 1, 3, 5, 7, 100]
+#Ls = [0.35, 0.5, 1, 1.5, 2, 4, 8, 20, 100]
+#Vgs = np.linspace(0.0, -1.8, 361)
+#Vds = np.linspace(0.0, -1.8, 361)
 
 ## Number of lines in data block header
 dbHeaderNLines = 12
@@ -36,7 +42,7 @@ dbHeaderNLines = 12
 if __name__ == "__main__":
     fname = sys.argv[1]
     ofname = sys.argv[2]
-    ofname1 = ofname.split(".sql")[0]+".pkl"
+    ofname1 = ofname.split(".sqlite")[0]+".pkl"
 
     ofp = db.connect(ofname)
     dbcur = ofp.cursor()
