@@ -10,10 +10,23 @@ A set of commands to help build tools and pdks from source.
 Python virtual environment.  `cd src && make update_pyvenv` to update.  Sourcing `env.sh` will include this venv as well.
 
 ## `util/`
-Utility programs such as simulating device models and plotting.
+Utility programs for simulating device models and plotting, etc.
+
+## Tool usage tips
+
+### `netgen`
+
+  - `netgen -batch lvs "cirA.spice subckt_name_A" "cirB.spice subckt_name_B" $PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl`
+  - Or put `$PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl` under the current directory then launch `netgen` without specifying this technology file
 
 ## Installation on macOS
 Dependencies are installed via `macports`.
+
+### xschem
+
+  1. Run `configure --prefix=/opt/OpenICEDA`.
+  2. Modify `Makefile.conf` to have `-ltcl8.6 -ltk8.6`.
+  3. Modify `src/xschem.h`: `#define __unix__ 1`.
 
 ### magic
 
@@ -39,3 +52,4 @@ make CFLAGS="-std=gnu90 -Wno-error=implicit-function-declaration -I/opt/local/in
   - [XLS: Accelerated HW Synthesis](https://google.github.io/xls/)
   - [OpenFASOC](https://github.com/idea-fasoc/OpenFASOC)
   - [Clash](https://clash-lang.org/)
+  - [JKU IIC](https://github.com/hpretl/iic-osic)

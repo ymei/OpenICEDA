@@ -53,8 +53,8 @@ class CommonData:
 
     def load_dataset(self, name):
         self.dfm = pd.read_pickle(name)
-        self.vgDelta = self.dfm.index.levels[2][1]
-        self.vdDelta = self.dfm.index.levels[3][1]
+        self.vgDelta = round(self.dfm.index.levels[2][1] - self.dfm.index.levels[2][0], 7)
+        self.vdDelta = round(self.dfm.index.levels[3][1] - self.dfm.index.levels[3][0], 7)
 
 class DataPanelGUI:
 
