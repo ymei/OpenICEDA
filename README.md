@@ -1,7 +1,7 @@
 # Tools for managing Open IC EDA toolchain
 
 ## `env.sh`
-Source this file to gain access to installed toolchain in this directory.
+Source this file to gain access to installed toolchain in this directory.  **NOTE** source before `make` or update packages.
 
 ## `src/Makefile`
 A set of commands to help build tools and pdks from source.
@@ -18,6 +18,10 @@ Utility programs for simulating device models and plotting, etc.
 
   - `netgen -batch lvs "cirA.spice subckt_name_A" "cirB.spice subckt_name_B" $PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl`
   - Or put `$PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl` under the current directory then launch `netgen` without specifying this technology file
+
+### `OpenLane`
+
+  - `cd $OPENLANE_ROOT`, `. venv/bin/activate`, then `make mount` to start docker.
 
 ## Installation on macOS
 Dependencies are installed via `macports`.
