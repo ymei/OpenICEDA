@@ -213,7 +213,8 @@ update_openroad:
 
 # need autopoint, ninja-build
 update_openlane:
-	DIR="OpenLane" GIT_SRC=$(GIT_SRC_OPENLANE); if [ ! -e "$$DIR" ];\
+	DIR="OpenLane" GIT_SRC=$(GIT_SRC_OPENLANE); rm -rf "$$DIR";\
+	if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	export OPENLANE_ROOT=$(OPENLANE_ROOT) && echo "OPENLANE_ROOT=$$OPENLANE_ROOT" &&\
@@ -221,7 +222,8 @@ update_openlane:
 	$(PYTHON) ./env.py local-install
 
 update_openlane_docker:
-	DIR="OpenLane" GIT_SRC=$(GIT_SRC_OPENLANE); if [ ! -e "$$DIR" ];\
+	DIR="OpenLane" GIT_SRC=$(GIT_SRC_OPENLANE); rm -rf "$$DIR";\
+	if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	export OPENLANE_ROOT=$(OPENLANE_ROOT) && echo "OPENLANE_ROOT=$$OPENLANE_ROOT" &&\
