@@ -58,7 +58,7 @@ update_ngspice:
 	mkdir -p build && cd build/ &&\
 	$(MAKE) uninstall ;\
 	$(MAKE) distclean ;\
-	../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
+	../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
