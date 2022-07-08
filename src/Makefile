@@ -70,7 +70,7 @@ update_verilator:
 	export VERILATOR_ROOT=`pwd` && 	echo "$$VERILATOR_ROOT" &&\
 	$(MAKE) distclean ;\
 	autoconf &&\
-	./configure &&\
+	CPPFLAGS="-I/opt/local/include" ./configure &&\
 	$(MAKE) $(MAKE_OPTIONS)
 
 # update_yosys update_graywolf update_qrouter update_magic update_netgen
