@@ -52,6 +52,24 @@ CFLAGS="-I/opt/local/include -I/opt/local/include/freetype2 -I/opt/local/include
 make CFLAGS="-std=gnu90 -Wno-error=implicit-function-declaration -I/opt/local/include -I../base" -j8
 ```
 
+## Installation on Ubuntu
+All of the dependencies via
+```
+sh util/Ubuntu-dependencies.sh
+```
+
+After installing magic and ngspice the libs may need to be relinked.
+```
+sudo update-alternatives --install /usr/bin/magic magic /opt/OpenICEDA/bin/magic 0
+sudo update-alternatives --install /usr/bin/ngspice ngspice /opt/OpenICEDA/bin/ngspice 0
+```
+But in principle, `env.sh` should set up `PATH` properly, which makes this unnecessary.
+
+Then xschem can be launched by
+```
+xschem --rcfile=/opt/OpenICEDA/share/pdk/sky130A/libs.tech/xschem/xschemrc
+```
+
 ## Tools to watch out for
   - [XLS: Accelerated HW Synthesis](https://google.github.io/xls/)
   - [OpenFASOC](https://github.com/idea-fasoc/OpenFASOC)
