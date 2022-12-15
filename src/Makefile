@@ -118,12 +118,11 @@ update_yosys:
 	DIR="yosys" GIT_SRC=$(GIT_SRC_YOSYS); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
-	mkdir -p build && cd build/ &&\
 	$(MAKE) uninstall ;\
-	$(MAKE) -f ../Makefile clean &&\
-	$(MAKE) -f ../Makefile config-clang && echo 'PREFIX := $(PREFIX)' >> Makefile.conf &&\
-	$(MAKE) -f ../Makefile $(MAKE_OPTIONS) &&\
-	$(MAKE) -f ../Makefile install
+	$(MAKE) -f Makefile clean &&\
+	$(MAKE) -f Makefile config-clang && echo 'PREFIX := $(PREFIX)' >> Makefile.conf &&\
+	$(MAKE) -f Makefile $(MAKE_OPTIONS) &&\
+	$(MAKE) -f Makefile install
 
 # need GSL.
 update_graywolf:
@@ -157,10 +156,10 @@ update_netgen:
 	$(MAKE) install
 
 # distclean will rm sky130 pdk under sources/, which is a big download.
-install_sky130pdk: update_open_pdks
+install_pdks: update_open_pdks
 	cd open_pdks/ &&\
 	$(MAKE) distclean ;\
-	./configure --prefix=$(PREFIX) --enable-sky130-pdk --with-sky130-local-path=$(DEST_SKY130PDK) --enable-sram-sky130 &&\
+	./configure --prefix=$(PREFIX) --enable-sky130-pdk --with-sky130-local-path=$(DEST_SKY130PDK) --enable-sram-sky130 --enable-gf180mcu-pdk &&\
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
