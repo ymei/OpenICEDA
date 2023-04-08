@@ -16,8 +16,8 @@ Utility programs for simulating device models and plotting, etc.
 
 ### `netgen`
 
-  - `netgen -batch lvs "cirA.spice subckt_name_A" "cirB.spice subckt_name_B" $PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl`
-  - Or put `$PDK_ROOT/sky130A/libs.tech/netgen/setup.tcl` under the current directory then launch `netgen` without specifying this technology file
+  - `netgen -batch lvs "cirA.spice subckt_name_A" "cirB.spice subckt_name_B" $PDK_ROOT/sky130B/libs.tech/netgen/setup.tcl`
+  - Or put `$PDK_ROOT/sky130B/libs.tech/netgen/setup.tcl` under the current directory then launch `netgen` without specifying this technology file
 
 ### `OpenLane`
 
@@ -42,7 +42,7 @@ make CFLAGS="-std=gnu90 -Wno-error=implicit-function-declaration -I/opt/local/in
 ### ngspice
 
 ```
-CFLAGS="-I/opt/local/include -I/opt/local/include/freetype2 -I/opt/local/include/libomp" LDFLAGS="-L/opt/local/lib -L/opt/local/lib/libomp" LIBS="-lomp" ../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-pss --with-readline=yes --enable-openmp --prefix=/opt/OpenICEDA
+CFLAGS="-I/opt/local/include -I/opt/local/include/freetype2 -I/opt/local/include/libomp" LDFLAGS="-L/opt/local/lib -L/opt/local/lib/libomp" LIBS="-lomp" ../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=/opt/OpenICEDA
 ```
 
 ### netgen
@@ -67,7 +67,7 @@ But in principle, `env.sh` should set up `PATH` properly, which makes this unnec
 
 Then xschem can be launched by
 ```
-xschem --rcfile=/opt/OpenICEDA/share/pdk/sky130A/libs.tech/xschem/xschemrc
+xschem --rcfile=/opt/OpenICEDA/share/pdk/sky130B/libs.tech/xschem/xschemrc
 ```
 
 ## Tools to watch out for

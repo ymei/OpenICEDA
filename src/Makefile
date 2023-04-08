@@ -49,7 +49,7 @@ update_xschem_gaw:
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
-# for compiling shared lib: ../configure --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-openmp --prefix=$(PREFIX)
+# for compiling shared lib: ../configure --with-ngshared --enable-relpath --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix=$(PREFIX)
 update_ngspice:
 	DIR="ngspice" GIT_SRC=$(GIT_SRC_NGSPICE); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
@@ -58,7 +58,7 @@ update_ngspice:
 	mkdir -p build && cd build/ &&\
 	$(MAKE) uninstall ;\
 	$(MAKE) distclean ;\
-	../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
+	../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
