@@ -23,6 +23,7 @@ GIT_SRC_AMARANTH   := https://github.com/amaranth-lang/amaranth
 GIT_SRC_OPENROAD   := https://github.com/The-OpenROAD-Project/OpenROAD
 GIT_SRC_OPENLANE   := https://github.com/The-OpenROAD-Project/OpenLane
 OPENLANE_ROOT      ?= $(PREFIX)/src/OpenLane
+GIT_SRC_OPENRAM    := https://github.com/VLSIDA/OpenRAM.git
 PYTHON             ?= python3
 PYVENV             ?= $(PREFIX)/OICvenv
 
@@ -95,7 +96,7 @@ update_magic:
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
-# need ruby-dev
+# need ruby-dev libgit2-dev
 update_klayout:
 	DIR="klayout" GIT_SRC=$(GIT_SRC_KLAYOUT); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
@@ -227,3 +228,11 @@ update_openlane_docker:
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	export OPENLANE_ROOT=$(OPENLANE_ROOT) && echo "OPENLANE_ROOT=$$OPENLANE_ROOT" &&\
 	make
+
+update_openram:
+	DIR="OpenRAM" GIT_SRC=$(GIT_SRC_OPENRAM); rm -rf "$$DIR";\
+	if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	make library
+
