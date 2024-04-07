@@ -24,6 +24,7 @@ GIT_SRC_OPENROAD   := https://github.com/The-OpenROAD-Project/OpenROAD
 GIT_SRC_OPENLANE   := https://github.com/The-OpenROAD-Project/OpenLane
 OPENLANE_ROOT      ?= $(PREFIX)/src/OpenLane
 GIT_SRC_OPENRAM    := https://github.com/VLSIDA/OpenRAM.git
+GIT_SRC_GDS3D      := https://github.com/trilomix/GDS3D.git
 PYTHON             ?= python3
 PYVENV             ?= $(PREFIX)/OICvenv
 
@@ -201,6 +202,8 @@ create_pyvenv:
 	$(PYTHON) -m venv --symlinks --system-site-packages --clear $(PYVENV)
 update_pyvenv:
 	$(PYTHON) -m venv --symlinks --system-site-packages --upgrade --upgrade-deps $(PYVENV)
+update_pypkgs:
+	pip --disable-pip-version-check list --outdated --format=json | $(PYTHON) -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | xargs -n1 pip install -U
 
 # need swig, libboost-all-dev, libspdlog-dev, libeigen3-dev, liblemon-dev tcllib
 update_openroad:
@@ -235,4 +238,11 @@ update_openram:
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	make library
+
+update_gds3d:
+	DIR="GDS3D" GIT_SRC=$(GIT_SRC_GDS3D);\
+	if [ ! -e "$$DIR" ];\
+    then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+    cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	ls
 
