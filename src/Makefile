@@ -20,6 +20,7 @@ GIT_SRC_VERILATOR  := https://github.com/verilator/verilator
 GIT_SRC_TRILINOS   := https://github.com/trilinos/Trilinos
 GIT_SRC_XYCE       := https://github.com/Xyce/Xyce
 GIT_SRC_AMARANTH   := https://github.com/amaranth-lang/amaranth
+GIT_SRC_OR-TOOLS   := https://github.com/google/or-tools
 GIT_SRC_OPENROAD   := https://github.com/The-OpenROAD-Project/OpenROAD
 GIT_SRC_OPENLANE   := https://github.com/The-OpenROAD-Project/OpenLane
 OPENLANE_ROOT      ?= $(PREFIX)/src/OpenLane
@@ -206,7 +207,16 @@ update_pypkgs:
 	pip --disable-pip-version-check list --outdated --format=json | $(PYTHON) -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | xargs -n1 pip install -U
 
 # need swig, libboost-all-dev, libspdlog-dev, libeigen3-dev, liblemon-dev tcllib
-update_openroad:
+update_ortools:
+	DIR="or-tools" GIT_SRC=$(GIT_SRC_OR-TOOLS); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	rm -rf build &&\
+	cmake -S . -B build -DBUILD_DEPS=ON &&\
+	cmake --build build --config Release --target all -j -v &&\
+	cmake -DCMAKE_INSTALL_PREFIX=$(PREFIX) --build build --config Release --target install -v
+
+update_openroad: update_ortools
 	DIR="OpenROAD" GIT_SRC=$(GIT_SRC_OPENROAD); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
