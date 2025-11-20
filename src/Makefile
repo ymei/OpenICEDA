@@ -15,7 +15,7 @@ GIT_SRC_NETGEN     := https://github.com/RTimothyEdwards/netgen
 GIT_SRC_QFLOW      := https://github.com/RTimothyEdwards/qflow
 GIT_SRC_XSCHEM     := https://github.com/StefanSchippers/xschem
 GIT_SRC_XSCHEM_GAW := https://github.com/StefanSchippers/xschem-gaw
-GIT_SRC_NGSPICE    := https://github.com/imr/ngspice
+GIT_SRC_NGSPICE    := git://git.code.sf.net/p/ngspice/ngspice
 GIT_SRC_VERILATOR  := https://github.com/verilator/verilator
 GIT_SRC_TRILINOS   := https://github.com/trilinos/Trilinos
 GIT_SRC_XYCE       := https://github.com/Xyce/Xyce
@@ -55,13 +55,25 @@ update_xschem_gaw:
 # for compiling shared lib: ../configure --with-ngshared --enable-relpath --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix=$(PREFIX)
 update_ngspice:
 	DIR="ngspice" GIT_SRC=$(GIT_SRC_NGSPICE); if [ ! -e "$$DIR" ];\
-	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$$GIT_SRC"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	./autogen.sh &&\
 	mkdir -p build && cd build/ &&\
 	$(MAKE) uninstall ;\
 	$(MAKE) distclean ;\
 	../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
+	$(MAKE) $(MAKE_OPTIONS) &&\
+	$(MAKE) install
+
+update_ngspice_macos:
+	DIR="ngspice" GIT_SRC=$(GIT_SRC_NGSPICE); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$$GIT_SRC"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	./autogen.sh &&\
+	mkdir -p build && cd build/ &&\
+	$(MAKE) uninstall ;\
+	$(MAKE) distclean ;\
+	CC=gcc-mp-15 CXX=g++-mp-15 CPPFLAGS="-I/opt/local/include -I/opt/local/include/libomp -I/opt/local/include/freetype2" LDFLAGS="-L/opt/local/lib -L/opt/local/lib/libomp" LIBS="-lomp" ../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
