@@ -24,6 +24,7 @@ Utility programs for simulating device models and plotting, etc.
   - `cd $OPENLANE_ROOT`, `. venv/bin/activate`, then `make mount` to start docker.
 
 ## Installation on macOS
+
 Dependencies are installed via `macports`.
 
 ### xschem
@@ -41,9 +42,55 @@ make CFLAGS="-std=gnu90 -Wno-error=implicit-function-declaration -I/opt/local/in
 
 ### ngspice
 
+There is a `update_ngspice_macos` target in `src/Makefile`.  Use `gcc-mp-15` to be consistent with verilator.
+
+In order to work with verilator, the script `/opt/OpenICEDA/share/ngspice/scripts/vlnggen` and `verilator_main.cpp` requires modification:
+
+``` diff
+--- ngspice/src/xspice/verilog/vlnggen	2025-11-20 00:40:30
++++ /opt/OpenICEDA/share/ngspice/scripts/vlnggen	2025-12-12 11:38:44
+@@ -50,7 +50,7 @@
+
+ if $oscompiled = 7 // MacOS
+    set macos=1
+-   setcs cflags="$cflags --compiler clang"
++   setcs cflags="$cflags --compiler gcc"
+ else
+    set macos=0
+ end
+@@ -318,7 +318,8 @@
+    setcs tail="__ALL.a"
+    setcs v_lib="$objdir/$prefix$tail"          // Like Vlng__ALL.a
+
+-   shell g++ --shared $v_objs $v_lib -pthread -lpthread -o $soname
++   shell echo g++-mp-15 "-Wl,-undefined,dynamic_lookup" --shared $v_objs $v_lib -pthread -lpthread -o $soname
++   shell g++-mp-15 "-Wl,-undefined,dynamic_lookup" --shared $v_objs $v_lib -pthread -lpthread -o $soname
+ else
+    // Assume we have CL.EXE and use that.  A script avoids multiple \escapes.
+```
+``` diff
+--- ngspice/src/xspice/verilog/verilator_main.cpp	2025-11-20 00:40:30
++++ /opt/OpenICEDA/share/ngspice/scripts/src/verilator_main.cpp	2025-12-12 15:18:03
+@@ -3,6 +3,9 @@
+ #include "ngspice/cmtypes.h" // For Digital_t
+ #include "ngspice/cosim.h"   // For struct co_info and prototypes
+
++// Required so the intermediate Verilator-built executable links.
++double sc_time_stamp() { return 0.0; }
++
+ int main(int argc, char** argv, char**) {
+     struct co_info info = {};
+```
+
+Configuration command:
+
 ```
 CFLAGS="-I/opt/local/include -I/opt/local/include/freetype2 -I/opt/local/include/libomp" LDFLAGS="-L/opt/local/lib -L/opt/local/lib/libomp" LIBS="-lomp" ../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=/opt/OpenICEDA
 ```
+
+### verilator
+
+In order to work well with ngspice, do `CC=gcc-mp-15 CXX=g++-mp-15 CPPFLAGS="-I/opt/local/include" ./configure` when configuring/compiling verilator.
 
 ### netgen
 
@@ -53,6 +100,7 @@ make CFLAGS="-std=gnu90 -Wno-error=implicit-function-declaration -I/opt/local/in
 ```
 
 ## Installation on Ubuntu
+
 All of the dependencies via
 ```
 sh util/Ubuntu-dependencies.sh
