@@ -10,6 +10,8 @@ GIT_SRC_MAGIC      := https://github.com/RTimothyEdwards/magic
 GIT_SRC_KLAYOUT    := https://github.com/KLayout/klayout
 GIT_SRC_XCIRCUIT   := https://github.com/RTimothyEdwards/xcircuit
 GIT_SRC_YOSYS      := https://github.com/YosysHQ/yosys
+GIT_SRC_YOSYS_SBY  := https://github.com/YosysHQ/sby
+GIT_SRC_Z3         := https://github.com/Z3Prover/z3
 GIT_SRC_NEXTPNR    := https://github.com/YosysHQ/nextpnr
 GIT_SRC_OPENFPGALOADER := https://github.com/trabucayre/openFPGALoader
 GIT_SRC_GRAYWOLF   := https://github.com/rubund/graywolf
@@ -36,7 +38,7 @@ PYVENV             ?= $(PREFIX)/OICvenv
 
 update_tools: update_qflow update_netgen update_magic update_xschem update_ngspice update_verilator
 
-update_xschem: update_xschem_gaw
+update_xschem:
 	DIR="xschem" GIT_SRC=$(GIT_SRC_XSCHEM); if [ ! -e "$$DIR" ];\
 	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
@@ -137,6 +139,29 @@ update_yosys:
 	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
 	rm -rf build &&\
 	cmake -B build . -DCMAKE_INSTALL_PREFIX=$(PREFIX) &&\
+	cmake --build build $(MAKE_OPTIONS) &&\
+	cmake --install build
+
+update_yosys_sby: update_z3
+	"$(PYVENV)/bin/python3" -m pip install click
+	DIR="sby" GIT_SRC=$(GIT_SRC_YOSYS_SBY); if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	rm -rf build &&\
+	make $(MAKE_OPTIONS) install PREFIX="$(PREFIX)"
+
+update_z3:
+	DIR="z3" GIT_SRC="$(GIT_SRC_Z3)"; if [ ! -e "$$DIR" ];\
+	then $(GIT) clone $(GIT_CLONE_OPTIONS) "$$GIT_SRC" "$$DIR"; fi &&\
+	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
+	rm -rf build &&\
+	cmake -S . -B build \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    -DCMAKE_INSTALL_PREFIX="$(PREFIX)" \
+	    -DBUILD_SHARED_LIBS=OFF \
+	    -DZ3_BUILD_EXECUTABLE=ON \
+	    -DZ3_BUILD_TEST_EXECUTABLES=OFF \
+	    -DZ3_BUILD_PYTHON_BINDINGS=OFF &&\
 	cmake --build build $(MAKE_OPTIONS) &&\
 	cmake --install build
 
