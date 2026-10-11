@@ -57,30 +57,60 @@ update_xschem_gaw:
 	$(MAKE) $(MAKE_OPTIONS) &&\
 	$(MAKE) install
 
-# for compiling shared lib: ../configure --with-ngshared --enable-relpath --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix=$(PREFIX)
+# Build both variants before installation. Only the CLI build installs common runtime data.
+.PHONY: update_ngspice update_ngspice_macos
 update_ngspice:
-	DIR="ngspice" GIT_SRC=$(GIT_SRC_NGSPICE); if [ ! -e "$$DIR" ];\
-	then $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$$GIT_SRC"; fi &&\
-	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
-	./autogen.sh &&\
-	mkdir -p build && cd build/ &&\
-	$(MAKE) uninstall ;\
-	$(MAKE) distclean ;\
-	../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
-	$(MAKE) $(MAKE_OPTIONS) &&\
-	$(MAKE) install
+	set -eu; \
+	if [ ! -d ngspice ]; then \
+	  $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$(GIT_SRC_NGSPICE)" ngspice; \
+	fi; \
+	cd ngspice; \
+	$(GIT) pull $(GIT_PULL_OPTIONS); \
+	./autogen.sh; \
+	for directory in build build-shared; do \
+	  mkdir -p "$$directory"; \
+	  if [ -f "$$directory/Makefile" ]; then \
+	    $(MAKE) -C "$$directory" distclean; \
+	  fi; \
+	done; \
+	(cd build && ../configure --with-x --with-readline=yes --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix="$(PREFIX)"); \
+	(cd build-shared && ../configure --with-ngshared --with-readline=no --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix="$(PREFIX)"); \
+	$(MAKE) -C build $(MAKE_OPTIONS); \
+	$(MAKE) -C build-shared $(MAKE_OPTIONS) 'libngspice_la_CFLAGS=' 'libngspice_la_LDFLAGS=-lstdc++ -version-info $$(LT_NGSPICE_CURRENT):$$(LT_NGSPICE_REVISION):$$(LT_NGSPICE_AGE)'; \
+	$(MAKE) -C build install; \
+	$(MAKE) -C build-shared/src install-libLTLIBRARIES 'libngspice_la_CFLAGS=' 'libngspice_la_LDFLAGS=-lstdc++ -version-info $$(LT_NGSPICE_CURRENT):$$(LT_NGSPICE_REVISION):$$(LT_NGSPICE_AGE)'; \
+	$(MAKE) -C build-shared/src/include/ngspice install-pkgincludeHEADERS; \
+	$(MAKE) -C build-shared install-pkgconfigDATA; \
+	install -m 644 src/include/ngspice/cosim.h src/include/ngspice/cmtypes.h \
+	  src/include/ngspice/miftypes.h "$(PREFIX)/include/ngspice/"
 
 update_ngspice_macos:
-	DIR="ngspice" GIT_SRC=$(GIT_SRC_NGSPICE); if [ ! -e "$$DIR" ];\
-	then $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$$GIT_SRC"; fi &&\
-	cd "$$DIR" && $(GIT) pull $(GIT_PULL_OPTIONS) &&\
-	./autogen.sh &&\
-	mkdir -p build && cd build/ &&\
-	$(MAKE) uninstall ;\
-	$(MAKE) distclean ;\
-	CC=gcc-mp-15 CXX=g++-mp-15 CPPFLAGS="-I/opt/local/include -I/opt/local/include/libomp -I/opt/local/include/freetype2" LDFLAGS="-L/opt/local/lib -L/opt/local/lib/libomp" LIBS="-lomp" ../configure --with-x --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --with-readline=yes --enable-openmp --prefix=$(PREFIX) &&\
-	$(MAKE) $(MAKE_OPTIONS) &&\
-	$(MAKE) install
+	set -eu; \
+	export CC=gcc-mp-15 CXX=g++-mp-15; \
+	export CPPFLAGS="-I/opt/local/include -I/opt/local/include/freetype2"; \
+	export LDFLAGS="-L/opt/local/lib"; \
+	if [ ! -d ngspice ]; then \
+	  $(GIT) clone $(GIT_CLONE_OPTIONS) -b master "$(GIT_SRC_NGSPICE)" ngspice; \
+	fi; \
+	cd ngspice; \
+	$(GIT) pull $(GIT_PULL_OPTIONS); \
+	./autogen.sh; \
+	for directory in build build-shared; do \
+	  mkdir -p "$$directory"; \
+	  if [ -f "$$directory/Makefile" ]; then \
+	    $(MAKE) -C "$$directory" distclean; \
+	  fi; \
+	done; \
+	(cd build && ../configure --with-x --with-readline=yes --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix="$(PREFIX)"); \
+	(cd build-shared && ../configure --with-ngshared --with-readline=no --enable-xspice --disable-debug --enable-cider --enable-predictor --enable-osdi --enable-pss --enable-openmp --prefix="$(PREFIX)"); \
+	$(MAKE) -C build $(MAKE_OPTIONS); \
+	$(MAKE) -C build-shared $(MAKE_OPTIONS) 'libngspice_la_CFLAGS=' 'libngspice_la_LDFLAGS=-lstdc++ -version-info $$(LT_NGSPICE_CURRENT):$$(LT_NGSPICE_REVISION):$$(LT_NGSPICE_AGE)'; \
+	$(MAKE) -C build install; \
+	$(MAKE) -C build-shared/src install-libLTLIBRARIES 'libngspice_la_CFLAGS=' 'libngspice_la_LDFLAGS=-lstdc++ -version-info $$(LT_NGSPICE_CURRENT):$$(LT_NGSPICE_REVISION):$$(LT_NGSPICE_AGE)'; \
+	$(MAKE) -C build-shared/src/include/ngspice install-pkgincludeHEADERS; \
+	$(MAKE) -C build-shared install-pkgconfigDATA; \
+	install -m 644 src/include/ngspice/cosim.h src/include/ngspice/cmtypes.h \
+	  src/include/ngspice/miftypes.h "$(PREFIX)/include/ngspice/"
 
 # Running will use files from `$VERILATOR_ROOT`, so no install needed
 update_verilator:
